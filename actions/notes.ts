@@ -113,6 +113,24 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
     console.log('🔍 DEBUG: - Data:', allNotes)
     console.log('🔍 DEBUG: - Data length:', allNotes?.length)
     
+    // If we can see all notes, filter them client-side as fallback
+    if (allNotes && allNotes.length > 0) {
+      const filteredNotes = allNotes.filter(note => note.board_id === boardId)
+      console.log('🔍 DEBUG: Client-side filtered notes:', filteredNotes.length)
+      
+      if (filteredNotes.length > 0) {
+        console.log('🔍 DEBUG: Using client-side filtered notes')
+        const response = { success: true, notes: filteredNotes }
+        console.log('🔍 DEBUG: Final response (client-side):', JSON.stringify({
+          success: response.success,
+          notesCount: response.notes?.length || 0,
+          boardId: boardId,
+          timestamp: new Date().toISOString()
+        }, null, 2))
+        return response
+      }
+    }
+    
     // Now try the filtered query with explicit ordering
     const { data, error } = await supabase
       .from('notes')
