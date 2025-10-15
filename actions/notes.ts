@@ -100,6 +100,9 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
     console.log('🔍 DEBUG: Board ID type:', typeof boardId, 'length:', boardId?.length)
     console.log('🔍 DEBUG INFO:', JSON.stringify(debugInfo, null, 2))
     
+    // Add a small delay to ensure database consistency
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
     // Try a simple query first without any filters
     const { data: allNotes, error: allError } = await supabase
       .from('notes')
@@ -110,11 +113,12 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
     console.log('🔍 DEBUG: - Data:', allNotes)
     console.log('🔍 DEBUG: - Data length:', allNotes?.length)
     
-    // Now try the filtered query
+    // Now try the filtered query with explicit ordering
     const { data, error } = await supabase
       .from('notes')
       .select('*')
       .eq('board_id', boardId)
+      .order('created_at', { ascending: false })
 
     console.log('🔍 DEBUG: Filtered query result:')
     console.log('🔍 DEBUG: - Error:', error)
@@ -129,19 +133,33 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
 
     console.log('🔍 DEBUG: Raw notes from database:', data)
     
-    // If no notes found, try without RLS to see if that's the issue
+    // If no notes found, try a retry with delay
     if (!data || data.length === 0) {
-      console.log('🔍 DEBUG: No notes found, trying without RLS...')
-      const { data: noRlsData, error: noRlsError } = await supabase
+      console.log('🔍 DEBUG: No notes found, trying retry with delay...')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      const { data: retryData, error: retryError } = await supabase
         .from('notes')
         .select('*')
         .eq('board_id', boardId)
-        .limit(10)
+        .order('created_at', { ascending: false })
       
-      console.log('🔍 DEBUG: No-RLS query result:')
-      console.log('🔍 DEBUG: - Error:', noRlsError)
-      console.log('🔍 DEBUG: - Data:', noRlsData)
-      console.log('🔍 DEBUG: - Data length:', noRlsData?.length)
+      console.log('🔍 DEBUG: Retry query result:')
+      console.log('🔍 DEBUG: - Error:', retryError)
+      console.log('🔍 DEBUG: - Data:', retryData)
+      console.log('🔍 DEBUG: - Data length:', retryData?.length)
+      
+      if (retryData && retryData.length > 0) {
+        console.log('🔍 DEBUG: Retry successful, using retry data')
+        const response = { success: true, notes: retryData }
+        console.log('🔍 DEBUG: Final response (retry):', JSON.stringify({
+          success: response.success,
+          notesCount: response.notes?.length || 0,
+          boardId: boardId,
+          timestamp: new Date().toISOString()
+        }, null, 2))
+        return response
+      }
     }
     
     console.log('🔍 DEBUG: Returning notes directly (no conversion needed):', data)
