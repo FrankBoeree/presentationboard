@@ -55,8 +55,10 @@ export async function createNote(
       return { success: false, error: 'Board is locked' }
     }
 
+    console.log('Creating note with data:', { boardId, text: text.trim(), type, author: author?.trim() || null })
     // Convert Dutch types to English for database
     const dbType = type === 'Vraag' ? 'Question' : 'Idea'
+    console.log('Converted type for database:', dbType)
 
     const { data, error } = await supabase
       .from('notes')
@@ -69,11 +71,16 @@ export async function createNote(
       .select()
       .single()
 
+    console.log('Insert result:')
+    console.log('- Error:', error)
+    console.log('- Data:', data)
+
     if (error) {
       console.error('Error creating note:', error)
       return { success: false, error: 'Error creating note' }
     }
 
+    console.log('Successfully created note:', data)
     return { success: true, note: data }
   } catch (error) {
     console.error('Unexpected error creating note:', error)
@@ -84,10 +91,17 @@ export async function createNote(
 export async function getNotes(boardId: string): Promise<{ success: boolean; notes?: Note[]; error?: string }> {
   try {
     console.log('Fetching notes for board:', boardId)
+    console.log('Board ID type:', typeof boardId, 'length:', boardId?.length)
+    
     const { data, error } = await supabase
       .from('notes')
       .select('*')
       .eq('board_id', boardId)
+
+    console.log('Supabase query result:')
+    console.log('- Error:', error)
+    console.log('- Data:', data)
+    console.log('- Data length:', data?.length)
 
     if (error) {
       console.error('Error fetching notes:', error)

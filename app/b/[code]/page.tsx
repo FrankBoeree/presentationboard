@@ -64,51 +64,54 @@ export default function BoardPage() {
     }
   }, [code])
 
-  // Setup realtime subscription
+  // Setup realtime subscription - TEMPORARILY DISABLED FOR DEBUGGING
   useEffect(() => {
     if (!board || !initialNotesLoaded) return
 
-    const supabase = getClientSupabase()
+    console.log('Realtime subscription would start here, but is disabled for debugging')
     
-    // Subscribe to notes changes
-    const notesChannel = supabase
-      .channel(`board-${board.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'notes',
-          filter: `board_id=eq.${board.id}`
-        },
-        (payload) => {
-          console.log('Notes change:', payload)
-          
-          if (payload.eventType === 'INSERT') {
-            const newNote = payload.new as Note
-            setNotes(prev => {
-              const exists = prev.some(note => note.id === newNote.id)
-              if (!exists) {
-                return [newNote, ...prev]
-              }
-              return prev
-            })
-          } else if (payload.eventType === 'UPDATE') {
-            const updatedNote = payload.new as Note
-            setNotes(prev => prev.map(note => 
-              note.id === updatedNote.id ? updatedNote : note
-            ))
-          } else if (payload.eventType === 'DELETE') {
-            const deletedNote = payload.old as Note
-            setNotes(prev => prev.filter(note => note.id !== deletedNote.id))
-          }
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(notesChannel)
-    }
+    // TEMPORARILY DISABLED - Realtime subscription
+    // const supabase = getClientSupabase()
+    // 
+    // // Subscribe to notes changes
+    // const notesChannel = supabase
+    //   .channel(`board-${board.id}`)
+    //   .on(
+    //     'postgres_changes',
+    //     {
+    //       event: '*',
+    //       schema: 'public',
+    //       table: 'notes',
+    //       filter: `board_id=eq.${board.id}`
+    //     },
+    //     (payload) => {
+    //       console.log('Notes change:', payload)
+    //       
+    //       if (payload.eventType === 'INSERT') {
+    //         const newNote = payload.new as Note
+    //         setNotes(prev => {
+    //           const exists = prev.some(note => note.id === newNote.id)
+    //           if (!exists) {
+    //             return [newNote, ...prev]
+    //           }
+    //           return prev
+    //         })
+    //       } else if (payload.eventType === 'UPDATE') {
+    //         const updatedNote = payload.new as Note
+    //         setNotes(prev => prev.map(note => 
+    //           note.id === updatedNote.id ? updatedNote : note
+    //         ))
+    //       } else if (payload.eventType === 'DELETE') {
+    //         const deletedNote = payload.old as Note
+    //         setNotes(prev => prev.filter(note => note.id !== deletedNote.id))
+    //       }
+    //     }
+    //   )
+    //   .subscribe()
+    //
+    // return () => {
+    //   supabase.removeChannel(notesChannel)
+    // }
   }, [board, initialNotesLoaded])
 
   // Filter and sort notes
