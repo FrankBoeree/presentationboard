@@ -115,7 +115,7 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
     
     // If we can see all notes, filter them client-side as fallback
     if (allNotes && allNotes.length > 0) {
-      const filteredNotes = allNotes.filter(note => note.board_id === boardId)
+      const filteredNotes = (allNotes as Note[]).filter(note => note.board_id === boardId)
       console.log('🔍 DEBUG: Client-side filtered notes:', filteredNotes.length)
       
       if (filteredNotes.length > 0) {
