@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Dieter Rams Design System Colors */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 210 100% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 7%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 20%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 210 100% 48%;
+    --radius: 0.25rem;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 210 100% 48%;
+    --primary-foreground: 0 0% 7%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 210 100% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .note-card {
+    @apply bg-white border border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    margin: 0.5rem 0;
+  }
+  
+  /* Note hierarchy based on votes */
+  .note-card-high-votes {
+    @apply shadow-2xl transform hover:-translate-y-2 rounded-2xl p-8;
+    background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+    border: 2px solid #f59e0b;
+    box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.1), 0 10px 10px -5px rgba(245, 158, 11, 0.04);
+    margin: 0.5rem 0;
+  }
+  
+  .note-card-high-votes:hover {
+    box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.25), 0 20px 25px -5px rgba(245, 158, 11, 0.1);
+  }
+  
+  .note-card-medium-votes {
+    @apply shadow-xl hover:shadow-2xl rounded-2xl p-8;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 1px solid #3b82f6;
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1), 0 4px 6px -2px rgba(59, 130, 246, 0.05);
+    margin: 0.5rem 0;
+  }
+  
+  .note-card-low-votes {
+    @apply shadow-lg hover:shadow-xl rounded-2xl p-8;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin: 0.5rem 0;
+  }
+  
+  .note-type-badge {
+    @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm;
+    backdrop-filter: blur(10px);
+  }
+  
+  .note-type-vraag {
+    @apply text-blue-800;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.2) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+  }
+  
+  .note-type-idee {
+    @apply text-green-800;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(134, 239, 172, 0.2) 100%);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);
+  }
+  
+  .note-type-opmerking {
+    @apply text-orange-800;
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(251, 191, 36, 0.2) 100%);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    box-shadow: 0 2px 4px rgba(249, 115, 22, 0.1);
+  }
+  
+  /* Enhanced vote button styles for high-vote notes */
+  .vote-button-high-votes {
+    @apply font-bold shadow-lg;
+    background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+    color: #92400e;
+    border: 2px solid #f59e0b;
+    box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
+  }
+  
+  .vote-button {
+    @apply flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105;
+    backdrop-filter: blur(10px);
+  }
+  
+  .vote-button-active {
+    @apply shadow-lg;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+    border: 2px solid #3b82f6;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+  }
+  
+  .vote-button-inactive {
+    @apply shadow-md hover:shadow-lg;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    color: #475569;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus-visible {
+  @apply outline-2 outline-offset-2 outline-blue-500;
+}
+
+/* Mobile overlay animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
