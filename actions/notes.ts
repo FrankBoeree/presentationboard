@@ -83,6 +83,7 @@ export async function createNote(
 
 export async function getNotes(boardId: string): Promise<{ success: boolean; notes?: Note[]; error?: string }> {
   try {
+    console.log('Fetching notes for board:', boardId)
     const { data, error } = await supabase
       .from('notes')
       .select('*')
@@ -95,12 +96,18 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
       return { success: false, error: 'Fout bij ophalen notes' }
     }
 
+    console.log('Raw notes from database:', data)
+    
     // Convert English types from database to Dutch for frontend
-    const notesWithDutchTypes = (data || []).map(note => ({
-      ...note,
-      type: note.type === 'Question' ? 'Vraag' : 'Idee'
-    }))
+    const notesWithDutchTypes = (data || []).map(note => {
+      console.log('Converting note:', note.id, 'type:', note.type)
+      return {
+        ...note,
+        type: note.type === 'Question' ? 'Vraag' : 'Idee'
+      }
+    })
 
+    console.log('Converted notes:', notesWithDutchTypes)
     return { success: true, notes: notesWithDutchTypes }
   } catch (error) {
     console.error('Unexpected error fetching notes:', error)

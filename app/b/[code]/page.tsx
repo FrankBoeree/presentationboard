@@ -39,10 +39,13 @@ export default function BoardPage() {
           setBoard(boardResult.board)
           
           const notesResult = await getNotes(boardResult.board.id)
+          console.log('Notes result:', notesResult)
           if (notesResult.success && notesResult.notes) {
+            console.log('Loaded notes:', notesResult.notes.length, 'notes')
             setNotes(notesResult.notes)
             setInitialNotesLoaded(true)
           } else {
+            console.error('Failed to load notes:', notesResult.error)
             setInitialNotesLoaded(true) // Still set to true to allow realtime subscription
           }
         } else {
