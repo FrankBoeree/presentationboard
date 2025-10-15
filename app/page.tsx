@@ -14,35 +14,26 @@ export default function HomePage() {
   const handleCreateBoard = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    console.log('handleCreateBoard called with title:', title)
-    
     if (!title.trim()) {
-      console.log('Title validation failed in frontend')
       setError('Title is required')
       return
     }
 
-    console.log('Setting isCreating to true')
     setIsCreating(true)
     setError('')
 
     try {
-      console.log('Calling createBoard with title:', title.trim())
       const result = await createBoard(title.trim())
-      console.log('createBoard result:', result)
       
       if (result.success && result.board) {
-        console.log('Success! Redirecting to:', `/presenter/${result.board.code}`)
         router.push(`/presenter/${result.board.code}`)
       } else {
-        console.log('Error from createBoard:', result.error)
         setError(result.error || 'Error creating board')
       }
     } catch (error) {
       console.error('Error creating board:', error)
-      setError('Unexpected error')
+      setError('Unexpected error: ' + (error as Error).message)
     } finally {
-      console.log('Setting isCreating to false')
       setIsCreating(false)
     }
   }
