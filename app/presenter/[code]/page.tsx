@@ -26,6 +26,7 @@ export default function PresenterPage() {
   const [error, setError] = useState('')
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('All')
   const [selectedSort, setSelectedSort] = useState<SortType>('Popular')
+  const [initialNotesLoaded, setInitialNotesLoaded] = useState(false)
 
   // Load board and initial notes
   useEffect(() => {
@@ -38,6 +39,9 @@ export default function PresenterPage() {
           const notesResult = await getNotes(boardResult.board.id)
           if (notesResult.success && notesResult.notes) {
             setNotes(notesResult.notes)
+            setInitialNotesLoaded(true)
+          } else {
+            setInitialNotesLoaded(true) // Still set to true to allow realtime subscription
           }
         } else {
           setError(boardResult.error || 'Board not found')
@@ -57,7 +61,7 @@ export default function PresenterPage() {
 
   // Setup realtime subscription
   useEffect(() => {
-    if (!board) return
+    if (!board || !initialNotesLoaded) return
 
     const supabase = getClientSupabase()
     
@@ -100,7 +104,7 @@ export default function PresenterPage() {
     return () => {
       supabase.removeChannel(notesChannel)
     }
-  }, [board])
+  }, [board, initialNotesLoaded])
 
   // Filter and sort notes
   useEffect(() => {

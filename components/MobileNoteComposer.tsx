@@ -99,7 +99,7 @@ export function MobileNoteComposer({ boardId, boardCode, boardLocked, onNoteCrea
     <>
       {/* Sticky Button */}
       <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
-        <div className="bg-white border-t border-gray-200 p-6">
+        <div className="bg-white border-t border-gray-200 p-4">
           <button
             onClick={() => setIsOpen(true)}
             disabled={boardLocked}

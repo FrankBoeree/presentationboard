@@ -28,6 +28,7 @@ export default function BoardPage() {
   const [error, setError] = useState('')
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('All')
   const [selectedSort, setSelectedSort] = useState<SortType>('Popular')
+  const [initialNotesLoaded, setInitialNotesLoaded] = useState(false)
 
   // Load board and initial notes
   useEffect(() => {
@@ -40,6 +41,9 @@ export default function BoardPage() {
           const notesResult = await getNotes(boardResult.board.id)
           if (notesResult.success && notesResult.notes) {
             setNotes(notesResult.notes)
+            setInitialNotesLoaded(true)
+          } else {
+            setInitialNotesLoaded(true) // Still set to true to allow realtime subscription
           }
         } else {
           setError(boardResult.error || 'Board not found')
@@ -59,7 +63,7 @@ export default function BoardPage() {
 
   // Setup realtime subscription
   useEffect(() => {
-    if (!board) return
+    if (!board || !initialNotesLoaded) return
 
     const supabase = getClientSupabase()
     
@@ -102,7 +106,7 @@ export default function BoardPage() {
     return () => {
       supabase.removeChannel(notesChannel)
     }
-  }, [board])
+  }, [board, initialNotesLoaded])
 
   // Filter and sort notes
   useEffect(() => {
@@ -201,7 +205,7 @@ export default function BoardPage() {
       />
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 lg:px-8 py-8 lg:py-12">
+      <main className="max-w-6xl mx-auto px-4 lg:px-8 py-8 lg:py-12 pb-24 lg:pb-12">
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Notes List */}
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
