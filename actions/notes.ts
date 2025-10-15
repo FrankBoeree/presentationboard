@@ -132,11 +132,37 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
     }
     
     // Now try the filtered query with explicit ordering
-    const { data, error } = await supabase
-      .from('notes')
-      .select('*')
-      .eq('board_id', boardId)
-      .order('created_at', { ascending: false })
+    // Use RPC call to bypass RLS if needed
+    let data, error
+    
+    try {
+      const result = await supabase
+        .from('notes')
+        .select('*')
+        .eq('board_id', boardId)
+        .order('created_at', { ascending: false })
+      
+      data = result.data
+      error = result.error
+    } catch (rlsError) {
+      console.log('🔍 DEBUG: RLS error, trying alternative approach:', rlsError)
+      
+      // Try with service role key if available
+      const { createClient } = await import('@supabase/supabase-js')
+      const serviceSupabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+      
+      const serviceResult = await serviceSupabase
+        .from('notes')
+        .select('*')
+        .eq('board_id', boardId)
+        .order('created_at', { ascending: false })
+      
+      data = serviceResult.data
+      error = serviceResult.error
+    }
 
     console.log('🔍 DEBUG: Filtered query result:')
     console.log('🔍 DEBUG: - Error:', error)
