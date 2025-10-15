@@ -32,7 +32,7 @@ const getTimeUntilNextAction = () => {
 
 export function NoteComposer({ boardId, boardCode, boardLocked, onNoteCreated }: NoteComposerProps) {
   const [text, setText] = useState('')
-  const [type, setType] = useState<'Question' | 'Idea'>('Question')
+  const [type, setType] = useState<'Vraag' | 'Idee'>('Vraag')
   const [author, setAuthor] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -100,9 +100,9 @@ export function NoteComposer({ boardId, boardCode, boardLocked, onNoteCreated }:
                   <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => setType('Question')}
+              onClick={() => setType('Vraag')}
               className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${
-                    type === 'Question'
+                    type === 'Vraag'
                   ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border-2 border-blue-300 shadow-lg'
                   : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border border-gray-300 hover:shadow-md'
               }`}
@@ -112,9 +112,9 @@ export function NoteComposer({ boardId, boardCode, boardLocked, onNoteCreated }:
             </button>
             <button
               type="button"
-              onClick={() => setType('Idea')}
+              onClick={() => setType('Idee')}
               className={`py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${
-                    type === 'Idea'
+                    type === 'Idee'
                   ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border-2 border-green-300 shadow-lg'
                   : 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border border-gray-300 hover:shadow-md'
               }`}

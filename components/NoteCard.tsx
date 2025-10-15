@@ -1,11 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Heart, Trash2, Pin } from 'lucide-react'
-import { Note } from '@/actions/notes'
+import { Heart, Trash2, Pin, PinOff } from 'lucide-react'
+import { deleteNote } from '@/actions/notes'
 import { VoteButton } from './VoteButton'
-import { getDeviceId } from '@/utils/deviceId'
-import { hasVoted } from '@/actions/votes'
+import { Note } from '@/actions/notes'
 
 interface NoteCardProps {
   note: Note
@@ -17,14 +16,25 @@ interface NoteCardProps {
 
 export function NoteCard({ note, isPresenter = false, onVote, onDelete, onPin }: NoteCardProps) {
   const [hasUserVoted, setHasUserVoted] = useState(false)
-  const [isCheckingVote, setIsCheckingVote] = useState(true)
+  const [isCheckingVote, setIsCheckingVote] = useState(false)
 
+  // Check if user has voted for this note
   useEffect(() => {
     const checkVoteStatus = async () => {
-      const deviceId = getDeviceId()
-      const voted = await hasVoted(note.id, deviceId)
-      setHasUserVoted(voted)
-      setIsCheckingVote(false)
+      if (typeof window === 'undefined') return
+      
+      const deviceId = localStorage.getItem('deviceId')
+      if (!deviceId) return
+
+      try {
+        const response = await fetch(`/api/votes/${note.id}?deviceId=${deviceId}`)
+        if (response.ok) {
+          const data = await response.json()
+          setHasUserVoted(data.hasVoted)
+        }
+      } catch (error) {
+        console.error('Error checking vote status:', error)
+      }
     }
 
     checkVoteStatus()
@@ -32,9 +42,9 @@ export function NoteCard({ note, isPresenter = false, onVote, onDelete, onPin }:
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'Question':
+      case 'Vraag':
         return 'Question'
-      case 'Idea':
+      case 'Idee':
         return 'Idea'
       default:
         return type
@@ -43,9 +53,9 @@ export function NoteCard({ note, isPresenter = false, onVote, onDelete, onPin }:
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'Question':
+      case 'Vraag':
         return 'note-type-vraag'
-      case 'Idea':
+      case 'Idee':
         return 'note-type-idee'
       default:
         return 'note-type-idee'
@@ -59,14 +69,16 @@ export function NoteCard({ note, isPresenter = false, onVote, onDelete, onPin }:
   }
 
   const getCardClass = (votes: number) => {
-    const level = getVoteLevel(votes)
-    switch (level) {
+    const voteLevel = getVoteLevel(votes)
+    const baseClass = 'bg-white rounded-2xl shadow-lg border border-gray-200 p-6 transition-all duration-300 hover:shadow-xl'
+    
+    switch (voteLevel) {
       case 'high':
-        return 'note-card-high-votes'
+        return `${baseClass} border-yellow-300 bg-gradient-to-br from-yellow-50 to-orange-50`
       case 'medium':
-        return 'note-card-medium-votes'
+        return `${baseClass} border-blue-300 bg-gradient-to-br from-blue-50 to-indigo-50`
       default:
-        return 'note-card-low-votes'
+        return baseClass
     }
   }
 
@@ -74,11 +86,11 @@ export function NoteCard({ note, isPresenter = false, onVote, onDelete, onPin }:
     const date = new Date(dateString)
     const now = new Date()
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
-
+    
     if (diffInMinutes < 1) return 'Just now'
     if (diffInMinutes < 60) return `${diffInMinutes}m ago`
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
-    return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+    return `${Math.floor(diffInMinutes / 1440)}d ago`
   }
 
   const voteLevel = getVoteLevel(note.votes)
@@ -130,15 +142,8 @@ export function NoteCard({ note, isPresenter = false, onVote, onDelete, onPin }:
         {isPresenter && (
           <div className="flex flex-col gap-1">
             <button
-              onClick={() => onPin?.(note.id)}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-              title="Pin note"
-            >
-              <Pin size={16} />
-            </button>
-            <button
               onClick={() => onDelete?.(note.id)}
-              className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+              className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
               title="Delete note"
             >
               <Trash2 size={16} />

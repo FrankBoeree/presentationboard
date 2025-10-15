@@ -15,7 +15,7 @@ CREATE TABLE notes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     board_id UUID NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
     text TEXT NOT NULL CHECK (LENGTH(text) <= 240),
-    type TEXT NOT NULL CHECK (type IN ('Vraag', 'Idee', 'Actie', 'Opmerking')),
+    type TEXT NOT NULL CHECK (type IN ('Question', 'Idea')),
     author TEXT,
     votes INTEGER DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()

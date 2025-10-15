@@ -6,7 +6,7 @@ export interface Note {
   id: string
   board_id: string
   text: string
-  type: 'Question' | 'Idea'
+  type: 'Vraag' | 'Idee'
   author: string | null
   votes: number
   created_at: string
@@ -15,7 +15,7 @@ export interface Note {
 export async function createNote(
   boardId: string,
   text: string,
-  type: 'Question' | 'Idea',
+  type: 'Vraag' | 'Idee',
   author?: string
 ): Promise<{ success: boolean; note?: Note; error?: string }> {
   try {
@@ -28,7 +28,7 @@ export async function createNote(
       return { success: false, error: 'Text must be maximum 240 characters' }
     }
 
-    if (!['Question', 'Idea'].includes(type)) {
+    if (!['Vraag', 'Idee'].includes(type)) {
       return { success: false, error: 'Invalid type' }
     }
 
@@ -55,12 +55,15 @@ export async function createNote(
       return { success: false, error: 'Board is locked' }
     }
 
+    // Convert Dutch types to English for database
+    const dbType = type === 'Vraag' ? 'Question' : 'Idea'
+
     const { data, error } = await supabase
       .from('notes')
       .insert({
         board_id: boardId,
         text: text.trim(),
-        type,
+        type: dbType,
         author: author?.trim() || null
       })
       .select()
@@ -92,7 +95,13 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
       return { success: false, error: 'Fout bij ophalen notes' }
     }
 
-    return { success: true, notes: data || [] }
+    // Convert English types from database to Dutch for frontend
+    const notesWithDutchTypes = (data || []).map(note => ({
+      ...note,
+      type: note.type === 'Question' ? 'Vraag' : 'Idee'
+    }))
+
+    return { success: true, notes: notesWithDutchTypes }
   } catch (error) {
     console.error('Unexpected error fetching notes:', error)
     return { success: false, error: 'Onverwachte fout' }

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Filter, Clock, TrendingUp } from 'lucide-react'
 
-type FilterType = 'All' | 'Question' | 'Idea'
+type FilterType = 'All' | 'Vraag' | 'Idee'
 type SortType = 'Popular' | 'Recent'
 
 interface FilterBarProps {
@@ -23,14 +23,14 @@ export function FilterBar({
 }: FilterBarProps) {
   const [showFilters, setShowFilters] = useState(false)
 
-  const filterTypes: FilterType[] = ['All', 'Question', 'Idea']
+  const filterTypes: FilterType[] = ['All', 'Vraag', 'Idee']
   const sortTypes: SortType[] = ['Popular', 'Recent']
 
   const getFilterLabel = (filter: FilterType) => {
     switch (filter) {
-      case 'Question':
+      case 'Vraag':
         return 'Question'
-      case 'Idea':
+      case 'Idee':
         return 'Idea'
       default:
         return filter
