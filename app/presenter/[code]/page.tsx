@@ -11,7 +11,7 @@ import { getNotes, deleteNote, Note } from '@/actions/notes'
 import { getClientSupabase } from '@/lib/supabase'
 import { Board } from '@/actions/boards'
 
-type FilterType = 'All' | 'Vraag' | 'Idee'
+type FilterType = 'All' | 'Question' | 'Idea'
 type SortType = 'Popular' | 'Recent'
 
 export default function PresenterPage() {

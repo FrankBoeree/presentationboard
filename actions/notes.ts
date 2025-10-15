@@ -6,7 +6,7 @@ export interface Note {
   id: string
   board_id: string
   text: string
-  type: 'Vraag' | 'Idee'
+  type: 'Question' | 'Idea'
   author: string | null
   votes: number
   created_at: string
@@ -15,7 +15,7 @@ export interface Note {
 export async function createNote(
   boardId: string,
   text: string,
-  type: 'Vraag' | 'Idee',
+  type: 'Question' | 'Idea',
   author?: string
 ): Promise<{ success: boolean; note?: Note; error?: string }> {
   try {
@@ -28,7 +28,7 @@ export async function createNote(
       return { success: false, error: 'Text must be maximum 240 characters' }
     }
 
-    if (!['Vraag', 'Idee'].includes(type)) {
+    if (!['Question', 'Idea'].includes(type)) {
       return { success: false, error: 'Invalid type' }
     }
 
@@ -56,16 +56,13 @@ export async function createNote(
     }
 
     console.log('🔍 DEBUG: Creating note with data:', { boardId, text: text.trim(), type, author: author?.trim() || null })
-    // Convert Dutch types to English for database
-    const dbType = type === 'Vraag' ? 'Question' : 'Idea'
-    console.log('🔍 DEBUG: Converted type for database:', dbType)
 
     const { data, error } = await supabase
       .from('notes')
       .insert({
         board_id: boardId,
         text: text.trim(),
-        type: dbType,
+        type,
         author: author?.trim() || null
       })
       .select()
@@ -123,17 +120,8 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
 
     console.log('🔍 DEBUG: Raw notes from database:', data)
     
-    // Convert English types from database to Dutch for frontend
-    const notesWithDutchTypes = (data || []).map(note => {
-      console.log('🔍 DEBUG: Converting note:', note.id, 'type:', note.type, 'board_id:', note.board_id)
-      return {
-        ...note,
-        type: note.type === 'Question' ? 'Vraag' : 'Idee'
-      }
-    })
-
-    console.log('🔍 DEBUG: Converted notes:', notesWithDutchTypes)
-    return { success: true, notes: notesWithDutchTypes }
+    console.log('🔍 DEBUG: Returning notes directly (no conversion needed):', data)
+    return { success: true, notes: data || [] }
   } catch (error) {
     console.error('Unexpected error fetching notes:', error)
     return { success: false, error: 'Onverwachte fout' }
