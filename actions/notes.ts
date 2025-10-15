@@ -88,8 +88,17 @@ export async function createNote(
 
 export async function getNotes(boardId: string): Promise<{ success: boolean; notes?: Note[]; error?: string }> {
   try {
+    // Add browser-visible debug info
+    const debugInfo = {
+      boardId,
+      boardIdType: typeof boardId,
+      boardIdLength: boardId?.length,
+      timestamp: new Date().toISOString()
+    }
+    
     console.log('🔍 DEBUG: Fetching notes for board:', boardId)
     console.log('🔍 DEBUG: Board ID type:', typeof boardId, 'length:', boardId?.length)
+    console.log('🔍 DEBUG INFO:', JSON.stringify(debugInfo, null, 2))
     
     // Try a simple query first without any filters
     const { data: allNotes, error: allError } = await supabase
@@ -136,7 +145,17 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
     }
     
     console.log('🔍 DEBUG: Returning notes directly (no conversion needed):', data)
-    return { success: true, notes: data || [] }
+    
+    // Add debug info to response for browser visibility
+    const response = { success: true, notes: data || [] }
+    console.log('🔍 DEBUG: Final response:', JSON.stringify({
+      success: response.success,
+      notesCount: response.notes?.length || 0,
+      boardId: boardId,
+      timestamp: new Date().toISOString()
+    }, null, 2))
+    
+    return response
   } catch (error) {
     console.error('Unexpected error fetching notes:', error)
     return { success: false, error: 'Onverwachte fout' }
