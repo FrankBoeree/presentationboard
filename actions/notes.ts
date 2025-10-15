@@ -88,8 +88,6 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
       .from('notes')
       .select('*')
       .eq('board_id', boardId)
-      .order('votes', { ascending: false })
-      .order('created_at', { ascending: false })
 
     if (error) {
       console.error('Error fetching notes:', error)
