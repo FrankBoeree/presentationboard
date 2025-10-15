@@ -13,16 +13,23 @@ export interface Board {
 
 export async function createBoard(title: string): Promise<{ success: boolean; board?: Board; error?: string }> {
   try {
+    console.log('createBoard called with title:', title)
+    
     if (!title || title.trim().length === 0) {
+      console.log('Title validation failed: empty title')
       return { success: false, error: 'Titel is verplicht' }
     }
 
     if (title.length > 100) {
+      console.log('Title validation failed: too long')
       return { success: false, error: 'Titel mag maximaal 100 tekens zijn' }
     }
 
+    console.log('Generating board code...')
     const code = generateBoardCode()
+    console.log('Generated code:', code)
     
+    console.log('Inserting board into database...')
     const { data, error } = await supabase
       .from('boards')
       .insert({
@@ -37,6 +44,7 @@ export async function createBoard(title: string): Promise<{ success: boolean; bo
       return { success: false, error: 'Fout bij aanmaken board' }
     }
 
+    console.log('Board created successfully:', data)
     return { success: true, board: data }
   } catch (error) {
     console.error('Unexpected error creating board:', error)
