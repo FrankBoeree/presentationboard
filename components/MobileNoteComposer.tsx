@@ -32,7 +32,7 @@ const getTimeUntilNextAction = () => {
 export function MobileNoteComposer({ boardId, boardCode, boardLocked, onNoteCreated }: MobileNoteComposerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [text, setText] = useState('')
-  const [type, setType] = useState<'Vraag' | 'Idee'>('Vraag')
+  const [type, setType] = useState<'Question' | 'Idea'>('Question')
   const [author, setAuthor] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -149,9 +149,9 @@ export function MobileNoteComposer({ boardId, boardCode, boardLocked, onNoteCrea
                         <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setType('Vraag')}
+                    onClick={() => setType('Question')}
                     className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                      type === 'Vraag'
+                      type === 'Question'
                         ? 'bg-blue-100 text-blue-700 border border-blue-200'
                         : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
                     }`}
@@ -161,9 +161,9 @@ export function MobileNoteComposer({ boardId, boardCode, boardLocked, onNoteCrea
                   </button>
                   <button
                     type="button"
-                    onClick={() => setType('Idee')}
+                    onClick={() => setType('Idea')}
                     className={`py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                      type === 'Idee'
+                      type === 'Idea'
                         ? 'bg-green-100 text-green-700 border border-green-200'
                         : 'bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200'
                     }`}

@@ -6,7 +6,7 @@ export interface Note {
   id: string
   board_id: string
   text: string
-  type: 'Vraag' | 'Idee'
+  type: 'Question' | 'Idea'
   author: string | null
   votes: number
   created_at: string
@@ -15,7 +15,7 @@ export interface Note {
 export async function createNote(
   boardId: string,
   text: string,
-  type: 'Vraag' | 'Idee',
+  type: 'Question' | 'Idea',
   author?: string
 ): Promise<{ success: boolean; note?: Note; error?: string }> {
   try {
@@ -28,7 +28,7 @@ export async function createNote(
       return { success: false, error: 'Text must be maximum 240 characters' }
     }
 
-    if (!['Vraag', 'Idee'].includes(type)) {
+    if (!['Question', 'Idea'].includes(type)) {
       return { success: false, error: 'Invalid type' }
     }
 

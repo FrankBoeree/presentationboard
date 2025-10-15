@@ -32,9 +32,9 @@ export function NoteCard({ note, isPresenter = false, onVote, onDelete, onPin }:
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'Vraag':
+      case 'Question':
         return 'Question'
-      case 'Idee':
+      case 'Idea':
         return 'Idea'
       default:
         return type
@@ -43,9 +43,9 @@ export function NoteCard({ note, isPresenter = false, onVote, onDelete, onPin }:
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'Vraag':
+      case 'Question':
         return 'note-type-vraag'
-      case 'Idee':
+      case 'Idea':
         return 'note-type-idee'
       default:
         return 'note-type-idee'

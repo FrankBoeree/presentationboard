@@ -42,7 +42,7 @@ export type Database = {
           id: string
           board_id: string
           text: string
-          type: 'Vraag' | 'Idee'
+          type: 'Question' | 'Idea'
           author: string | null
           votes: number
           created_at: string
@@ -51,7 +51,7 @@ export type Database = {
           id?: string
           board_id: string
           text: string
-          type: 'Vraag' | 'Idee'
+          type: 'Question' | 'Idea'
           author?: string | null
           votes?: number
           created_at?: string
@@ -60,7 +60,7 @@ export type Database = {
           id?: string
           board_id?: string
           text?: string
-          type?: 'Vraag' | 'Idee'
+          type?: 'Question' | 'Idea'
           author?: string | null
           votes?: number
           created_at?: string
