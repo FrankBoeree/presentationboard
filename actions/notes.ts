@@ -93,12 +93,23 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
     console.log('Fetching notes for board:', boardId)
     console.log('Board ID type:', typeof boardId, 'length:', boardId?.length)
     
+    // Try a simple query first without any filters
+    const { data: allNotes, error: allError } = await supabase
+      .from('notes')
+      .select('*')
+    
+    console.log('All notes query result:')
+    console.log('- Error:', allError)
+    console.log('- Data:', allNotes)
+    console.log('- Data length:', allNotes?.length)
+    
+    // Now try the filtered query
     const { data, error } = await supabase
       .from('notes')
       .select('*')
       .eq('board_id', boardId)
 
-    console.log('Supabase query result:')
+    console.log('Filtered query result:')
     console.log('- Error:', error)
     console.log('- Data:', data)
     console.log('- Data length:', data?.length)
