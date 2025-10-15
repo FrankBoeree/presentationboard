@@ -55,10 +55,10 @@ export async function createNote(
       return { success: false, error: 'Board is locked' }
     }
 
-    console.log('Creating note with data:', { boardId, text: text.trim(), type, author: author?.trim() || null })
+    console.log('🔍 DEBUG: Creating note with data:', { boardId, text: text.trim(), type, author: author?.trim() || null })
     // Convert Dutch types to English for database
     const dbType = type === 'Vraag' ? 'Question' : 'Idea'
-    console.log('Converted type for database:', dbType)
+    console.log('🔍 DEBUG: Converted type for database:', dbType)
 
     const { data, error } = await supabase
       .from('notes')
@@ -71,16 +71,17 @@ export async function createNote(
       .select()
       .single()
 
-    console.log('Insert result:')
-    console.log('- Error:', error)
-    console.log('- Data:', data)
+    console.log('🔍 DEBUG: Insert result:')
+    console.log('🔍 DEBUG: - Error:', error)
+    console.log('🔍 DEBUG: - Data:', data)
+    console.log('🔍 DEBUG: - Inserted board_id:', data?.board_id)
 
     if (error) {
       console.error('Error creating note:', error)
       return { success: false, error: 'Error creating note' }
     }
 
-    console.log('Successfully created note:', data)
+    console.log('🔍 DEBUG: Successfully created note:', data)
     return { success: true, note: data }
   } catch (error) {
     console.error('Unexpected error creating note:', error)
@@ -90,18 +91,18 @@ export async function createNote(
 
 export async function getNotes(boardId: string): Promise<{ success: boolean; notes?: Note[]; error?: string }> {
   try {
-    console.log('Fetching notes for board:', boardId)
-    console.log('Board ID type:', typeof boardId, 'length:', boardId?.length)
+    console.log('🔍 DEBUG: Fetching notes for board:', boardId)
+    console.log('🔍 DEBUG: Board ID type:', typeof boardId, 'length:', boardId?.length)
     
     // Try a simple query first without any filters
     const { data: allNotes, error: allError } = await supabase
       .from('notes')
       .select('*')
     
-    console.log('All notes query result:')
-    console.log('- Error:', allError)
-    console.log('- Data:', allNotes)
-    console.log('- Data length:', allNotes?.length)
+    console.log('🔍 DEBUG: All notes query result:')
+    console.log('🔍 DEBUG: - Error:', allError)
+    console.log('🔍 DEBUG: - Data:', allNotes)
+    console.log('🔍 DEBUG: - Data length:', allNotes?.length)
     
     // Now try the filtered query
     const { data, error } = await supabase
@@ -109,28 +110,29 @@ export async function getNotes(boardId: string): Promise<{ success: boolean; not
       .select('*')
       .eq('board_id', boardId)
 
-    console.log('Filtered query result:')
-    console.log('- Error:', error)
-    console.log('- Data:', data)
-    console.log('- Data length:', data?.length)
+    console.log('🔍 DEBUG: Filtered query result:')
+    console.log('🔍 DEBUG: - Error:', error)
+    console.log('🔍 DEBUG: - Data:', data)
+    console.log('🔍 DEBUG: - Data length:', data?.length)
+    console.log('🔍 DEBUG: - Board ID used in filter:', boardId)
 
     if (error) {
       console.error('Error fetching notes:', error)
       return { success: false, error: 'Fout bij ophalen notes' }
     }
 
-    console.log('Raw notes from database:', data)
+    console.log('🔍 DEBUG: Raw notes from database:', data)
     
     // Convert English types from database to Dutch for frontend
     const notesWithDutchTypes = (data || []).map(note => {
-      console.log('Converting note:', note.id, 'type:', note.type)
+      console.log('🔍 DEBUG: Converting note:', note.id, 'type:', note.type, 'board_id:', note.board_id)
       return {
         ...note,
         type: note.type === 'Question' ? 'Vraag' : 'Idee'
       }
     })
 
-    console.log('Converted notes:', notesWithDutchTypes)
+    console.log('🔍 DEBUG: Converted notes:', notesWithDutchTypes)
     return { success: true, notes: notesWithDutchTypes }
   } catch (error) {
     console.error('Unexpected error fetching notes:', error)
